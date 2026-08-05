@@ -1,0 +1,356 @@
+/* ==========================================================================
+   Solar System — styles
+   ========================================================================== */
+
+/* CSS custom properties keep sizes/times consistent and easy to tweak */
+:root {
+  --speed-multiplier: 1;
+
+  /* Palette — deep observatory indigo, warm sun gold, pale starlight */
+  --bg-core: #0b1026;
+  --bg-deep: #04060f;
+  --starlight: #e8ecff;
+  --orbit-line: rgba(150, 170, 255, 0.25);
+  --gold: #ffd94d;
+
+  --orbit-mercury: 90px;
+  --orbit-venus: 130px;
+  --orbit-earth: 170px;
+  --orbit-mars: 210px;
+  --orbit-jupiter: 265px;
+  --orbit-saturn: 320px;
+  --orbit-uranus: 375px;
+  --orbit-neptune: 430px;
+}
+
+/* ---------- Layout / background ---------- */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, var(--bg-core) 0%, var(--bg-deep) 70%, #01020a 100%);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Subtle twinkling stars generated with a repeating background + keyframes */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(1px 1px at 70% 15%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1.5px 1.5px at 40% 70%, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(1px 1px at 85% 60%, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1px 1px at 10% 85%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1.5px 1.5px at 55% 45%, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 90% 90%, rgba(255, 255, 255, 0.8), transparent);
+  animation: twinkle 4s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.4; }
+  to   { opacity: 1; }
+}
+
+.title {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--starlight);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(255, 217, 77, 0.35);
+}
+
+/* ---------- Solar system container ---------- */
+
+#solar-system {
+  position: relative;
+  width: 900px;
+  height: 900px;
+}
+
+/* When paused, every rotating element stops spinning */
+#solar-system.paused .orbit,
+#solar-system.paused .moon-orbit {
+  animation-play-state: paused;
+}
+
+/* ---------- The Sun ---------- */
+
+.sun {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff7c0, #ffd94d 45%, #ff9d1f 75%, #f2651d);
+  /* Glow created with layered box-shadows */
+  box-shadow:
+    0 0 30px 8px rgba(255, 200, 60, 0.5),
+    0 0 80px 25px rgba(255, 160, 30, 0.35),
+    0 0 160px 60px rgba(255, 120, 20, 0.2);
+  animation: sun-pulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes sun-pulse {
+  from { box-shadow: 0 0 30px 8px rgba(255, 200, 60, 0.5), 0 0 80px 25px rgba(255, 160, 30, 0.35), 0 0 160px 60px rgba(255, 120, 20, 0.2); }
+  to   { box-shadow: 0 0 40px 12px rgba(255, 210, 70, 0.65), 0 0 100px 35px rgba(255, 170, 40, 0.45), 0 0 200px 80px rgba(255, 130, 30, 0.28); }
+}
+
+/* Decorative faint ring around the sun (spun separately so it can rotate
+   freely even while the rest is paused) */
+.sun-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  transform: translate(-50%, -50%);
+  border: 1px dashed rgba(255, 210, 120, 0.35);
+  border-radius: 50%;
+  animation: spin 20s linear infinite;
+}
+
+/* ---------- Orbits & planets ---------- */
+
+/*
+ * Each orbit wrapper is sized by a CSS variable, centered, and given a
+ * circular border that becomes the visible orbit line. It also spins,
+ * carrying the planet along its path.
+ */
+.orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--orbit-size);
+  height: var(--orbit-size);
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--orbit-line);
+  border-radius: 50%;
+  animation: spin var(--duration) linear infinite;
+}
+
+/* Set a per-orbit duration. Also set on the label (via the same var) so it
+   counter-rotates and always stays upright. */
+#mercury-orbit { --orbit-size: var(--orbit-mercury); --duration: 6s; }
+#venus-orbit   { --orbit-size: var(--orbit-venus);   --duration: 9s; }
+#earth-orbit   { --orbit-size: var(--orbit-earth);   --duration: 12s; }
+#mars-orbit    { --orbit-size: var(--orbit-mars);    --duration: 16s; }
+#jupiter-orbit { --orbit-size: var(--orbit-jupiter); --duration: 24s; }
+#saturn-orbit  { --orbit-size: var(--orbit-saturn);  --duration: 30s; }
+#uranus-orbit  { --orbit-size: var(--orbit-uranus);  --duration: 38s; }
+#neptune-orbit { --orbit-size: var(--orbit-neptune); --duration: 46s; }
+
+/* The planet sits at the top of the orbit circle (12 o'clock). As the orbit
+   spins, the planet travels along its path around the Sun. */
+.planet {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+}
+
+/* Approximate colors & sizes (not to scale) */
+.mercury { width: 10px;  height: 10px;  background: #b8a89a; box-shadow: 0 0 6px 1px rgba(184, 168, 154, 0.6); }
+.venus   { width: 16px;  height: 16px;  background: #f0c27a; box-shadow: 0 0 6px 1px rgba(240, 194, 122, 0.6); }
+.earth   { width: 18px;  height: 18px;  background: radial-gradient(circle at 30% 30%, #6db3f2, #3a7bd5 60%, #2a5ca8); box-shadow: 0 0 8px 2px rgba(80, 150, 255, 0.5); }
+.mars    { width: 14px;  height: 14px;  background: #e07a5f; box-shadow: 0 0 6px 1px rgba(224, 122, 95, 0.6); }
+.jupiter { width: 34px;  height: 34px;  background: linear-gradient(160deg, #f5d6a8, #d9a066 50%, #b5764a); box-shadow: 0 0 10px 2px rgba(240, 190, 140, 0.5); }
+.saturn  { width: 28px;  height: 28px;  background: linear-gradient(160deg, #f0d9a8, #d4b478); box-shadow: 0 0 8px 2px rgba(220, 190, 140, 0.5); }
+.uranus  { width: 24px;  height: 24px;  background: radial-gradient(circle at 35% 35%, #b8f0f0, #7fd4d4); box-shadow: 0 0 8px 2px rgba(120, 220, 220, 0.5); }
+.neptune { width: 24px;  height: 24px;  background: radial-gradient(circle at 35% 35%, #7aa7ff, #2f5fd6); box-shadow: 0 0 8px 2px rgba(80, 120, 255, 0.5); }
+
+/* Saturn's ring — a flat ellipse rendered with borders */
+.saturn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 52px;
+  height: 18px;
+  transform: translate(-50%, -50%) rotate(-20deg);
+  border-radius: 50%;
+  border: 3px solid rgba(220, 190, 130, 0.8);
+}
+
+/* ---------- Moon ---------- */
+
+.moon-orbit {
+  --orbit-size: 34px;
+  --duration: 3s;
+  border: 1px solid rgba(180, 200, 255, 0.25);
+}
+
+.moon {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: #d9d9d9;
+  box-shadow: 0 0 4px 1px rgba(220, 220, 220, 0.6);
+}
+
+/* ---------- Labels ---------- */
+
+.label {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  color: var(--starlight);
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
+  /* Counter-rotate around its own position so the text stays readable
+     while its orbit keeps spinning underneath */
+  animation: label-spin var(--duration) linear infinite reverse;
+}
+
+/* ---------- Asteroid belt (signature element) ---------- */
+
+/* A faint dotted ring sitting between Mars and Jupiter — a quiet homage to
+   the real belt, barely perceptible but distinct from the orbit lines */
+.belt {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 244px;
+  height: 244px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px dashed rgba(200, 215, 255, 0.12);
+  background-image:
+    radial-gradient(1px 1px at 12% 40%, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 50% 12%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 68% 78%, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 90% 55%, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(1px 1px at 30% 90%, rgba(255, 255, 255, 0.45), transparent);
+}
+
+/* ---------- Controls ---------- */
+
+.controls {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 18px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+  color: #dfe6ff;
+  font-size: 0.9rem;
+}
+
+#pause-btn {
+  padding: 8px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #dfe6ff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#pause-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.controls label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+input[type="range"] {
+  width: 140px;
+  cursor: pointer;
+  accent-color: var(--gold);
+}
+
+/* Visible keyboard focus for accessibility */
+#pause-btn:focus-visible,
+#speed:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* ---------- Animation keyframes ---------- */
+
+@keyframes spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Keeps the label horizontally centered while it spins upright */
+@keyframes label-spin {
+  from { transform: translateX(-50%) rotate(0); }
+  to   { transform: translateX(-50%) rotate(360deg); }
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 980px) {
+  /* Shrink every orbit so the whole system fits smaller screens */
+  :root {
+    --orbit-mercury: 54px;
+    --orbit-venus: 78px;
+    --orbit-earth: 102px;
+    --orbit-mars: 126px;
+    --orbit-jupiter: 160px;
+    --orbit-saturn: 194px;
+    --orbit-uranus: 228px;
+    --orbit-neptune: 262px;
+  }
+
+  #solar-system {
+    width: 560px;
+    height: 560px;
+  }
+
+  /* Belt must shrink too so it stays between Mars and Jupiter */
+  .belt {
+    width: 146px;
+    height: 146px;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+/* Respect a user's preference for less motion by showing the system still,
+   only the gentle sun pulse and star twinkle remain */
+@media (prefers-reduced-motion: reduce) {
+  .orbit,
+  .moon-orbit,
+  .sun-ring,
+  .label {
+    animation: none;
+  }
+}

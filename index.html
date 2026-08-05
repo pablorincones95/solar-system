@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solar System</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Add the paused class to freeze CSS animations -->
+  <div id="solar-system">
+
+    <!-- The Sun sits at the center with a glowing effect -->
+    <div class="sun"></div>
+
+<!--
+      Each orbit is a styled wrapper that rotates on a circular border line,
+      carrying the planet around the Sun. Each label counter-rotates on its
+      own so the text always stays upright and readable.
+    -->
+    <div class="orbit" id="mercury-orbit">
+      <div class="planet mercury"></div>
+      <span class="label">Mercury</span>
+    </div>
+
+    <div class="orbit" id="venus-orbit">
+      <div class="planet venus"></div>
+      <span class="label">Venus</span>
+    </div>
+
+    <div class="orbit" id="earth-orbit">
+      <div class="planet earth"></div>
+      <span class="label">Earth</span>
+      <!-- Moon orbits around Earth using a nested orbit -->
+      <div class="orbit moon-orbit">
+        <div class="moon"></div>
+      </div>
+    </div>
+
+    <div class="orbit" id="mars-orbit">
+      <div class="planet mars"></div>
+      <span class="label">Mars</span>
+    </div>
+
+    <!-- Asteroid belt — a quiet signature between Mars and Jupiter -->
+    <div class="belt"></div>
+
+    <div class="orbit" id="jupiter-orbit">
+      <div class="planet jupiter"></div>
+      <span class="label">Jupiter</span>
+    </div>
+
+    <div class="orbit" id="saturn-orbit">
+      <div class="planet saturn">
+        <!-- Saturn's ring is a pseudo-element -->
+      </div>
+      <span class="label">Saturn</span>
+    </div>
+
+    <div class="orbit" id="uranus-orbit">
+      <div class="planet uranus"></div>
+      <span class="label">Uranus</span>
+    </div>
+
+    <div class="orbit" id="neptune-orbit">
+      <div class="planet neptune"></div>
+      <span class="label">Neptune</span>
+    </div>
+
+    <!-- Source star sits above the CSS core so it keeps a fixed rotation
+         even while the outer orbits are paused -->
+    <div class="sun-ring"></div>
+  </div>
+
+  <!-- Control panel: pause/resume + global speed slider -->
+  <div class="controls">
+    <button id="pause-btn" type="button" aria-pressed="false">Pause</button>
+    <label for="speed">
+      Speed
+      <input id="speed" type="range" min="10" max="400" value="100" />
+    </label>
+  </div>
+
+  <h1 class="title">The Solar System</h1>
+
+  <script src="script.js"></script>
+</body>
+</html>
